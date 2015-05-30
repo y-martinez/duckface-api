@@ -38,12 +38,18 @@ app.get('/', function(req, res) {
 // ---------------------------------------------------------
 // get an instance of the router for api routes
 // ---------------------------------------------------------
-var apiRoutes = express.Router(); 
+var apiRoutes = express.Router(),
+	wordRoutes = express.Router(); 
 
 // loading default routes
 require('./app/routes/default.js')(app,apiRoutes);
 
+// loading word routes
+require('./app/routes/word.js')(app,wordRoutes);
+
+
 app.use('/api', apiRoutes);
+app.use('/api', wordRoutes);
 
 
 // Making prettier unauthorized method

@@ -7,6 +7,13 @@ module.exports = function(app,apiRoutes) {
 
     var User        = require('../models/user'); // get our mongoose model
 
+
+    // http://localhost:8080/api
+    // Welcome route
+    apiRoutes.get('/', function(req, res) {
+        res.json({ message: 'Welcome to the coolest API on earth!' });
+    });
+
     // http://localhost:8080/api/authenticate
     // Send jwt to client
     apiRoutes.post('/authenticate', function(req, res) {
@@ -44,10 +51,7 @@ module.exports = function(app,apiRoutes) {
         });
     });
 
-
-    // on routes that end in /users
     // this creates a simple user
-    // ----------------------------------------------------
     apiRoutes.route('/users')
 
         // create a user (accessed at POST http://localhost:8080/api/users)
@@ -71,22 +75,23 @@ module.exports = function(app,apiRoutes) {
             });
         });
 
+    // return information about that user
     apiRoutes.get('/users/:username', function(req, res) {
-        console.log(req.params.username);
-        User.findOne({username: req.params.username}, function(err, user) {
-            console.log(user);
-            if (err)
-                res.send(err);
-            res.json(user);
-        });
+        if (req.params.username != req.user.username){
+            res.status(401).send('Wrong user');
+        }else{
+            User.findOne({username: req.params.username}, function(err, user) {
+                console.log(user);
+                if (err)
+                    res.send(err);
+                res.json(user);
+            });
+        }
     });
 
     // ---------------------------------------------------------
     // authenticated routes
     // ---------------------------------------------------------
-    apiRoutes.get('/', function(req, res) {
-        res.json({ message: 'Welcome to the coolest API on earth!' });
-    });
 
     apiRoutes.get('/restricted', function (req, res) {
         console.log('Someone is calling /api/restricted');
