@@ -24,24 +24,31 @@ module.exports = function(app,wordRoutes) {
 
         // create a word (accessed at POST http://localhost:8080/api/words)
         .post(function(req, res) {
-            console.log('I\'m starting to create a new word');
-            var word = new Word();
-            console.log("I created the object");
-            word.text = req.body.text;
-            word.feeling = req.body.feeling;
-            word.enabled = true;
-            word.last_user_id = null;
-            word.word_type = req.body.word_type;
-            console.log("apparently, I did it");
-            console.log(word.text,word.feeling,word.word_type);
-
-            // save the word and check for errors
-            word.save(function(err) {
-                if (err)
+            Word.count({ text: req.body.text }, function (err, count) {
+                if (err) 
                     res.send(err);
 
-                res.json({ message: 'Word created!' });
+                if(count==0){
+                    var word = new Word();
+                    word.text = req.body.text;
+                    word.feeling = req.body.feeling;
+                    word.enabled = true;
+                    word.last_user_id = null;
+                    word.word_type = req.body.word_type;
+                    console.log(word.text,word.feeling,word.word_type);
+
+                    // save the word and check for errors
+                    word.save(function(err) {
+                        if (err)
+                            res.send(err);
+
+                        res.json({ message: 'Word created!' });
+                    });
+                }else{
+                    res.send('Word already exists');
+                }
             });
+
         });
 
 
@@ -87,7 +94,7 @@ module.exports = function(app,wordRoutes) {
         // delete the word with this id (accessed at DELETE http://localhost:8080/api/word/:word_text)
         .delete(function(req, res) {
             Word.findOne({text: req.params.word_text}, function(err, word) {
-                
+
                 word.enabled = false;
                 word.last_user_id = req.user._id;
 
