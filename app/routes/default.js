@@ -7,6 +7,44 @@ module.exports = function(app,apiRoutes) {
 
     var User        = require('../models/user'); // get our mongoose model
 
+    // http://localhost:8080/api/authenticate
+    // Send jwt to client
+    apiRoutes.post('/authenticate', function(req, res) {
+
+        // find the user
+        User.findOne({
+            username: req.body.username
+        }, function(err, user) {
+
+            if (err) throw err;
+
+            if (!user) {
+                res.json({ success: false, message: 'Authentication failed. User not found. ' + req.body.username});
+            } else if (user) {
+
+                // check if password matches
+                user.comparePassword(req.body.password, function (err, isMatch) {
+                    if (isMatch && !err) {
+                        // if user is found and password is right
+                        // create a token
+                        var token = jwt.sign(user, app.get('superSecret'), {
+                            expiresInMinutes: 60*24 // expires in 24 hours
+                        });
+
+                        res.json({
+                            success: true,
+                            message: 'Enjoy your token!',
+                            token: token
+                        });
+                    } else {
+                        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                    }
+                });
+            }
+        });
+    });
+
+
     // on routes that end in /users
     // this creates a simple user
     // ----------------------------------------------------
@@ -43,42 +81,6 @@ module.exports = function(app,apiRoutes) {
         });
     });
 
-    // http://localhost:8080/api/authenticate
-    apiRoutes.post('/authenticate', function(req, res) {
-
-        // find the user
-        User.findOne({
-            username: req.body.username
-        }, function(err, user) {
-
-            if (err) throw err;
-
-            if (!user) {
-                res.json({ success: false, message: 'Authentication failed. User not found. ' + req.body.username});
-            } else if (user) {
-
-                // check if password matches
-                user.comparePassword(req.body.password, function (err, isMatch) {
-                    if (isMatch && !err) {
-                        // if user is found and password is right
-                        // create a token
-                        var token = jwt.sign(user, app.get('superSecret'), {
-                            expiresInMinutes: 60*24 // expires in 24 hours
-                        });
-
-                        res.json({
-                            success: true,
-                            message: 'Enjoy your token!',
-                            token: token
-                        });
-                    } else {
-                        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-                    }
-                });
-            }
-        });
-    });
-
     // ---------------------------------------------------------
     // authenticated routes
     // ---------------------------------------------------------
@@ -94,7 +96,8 @@ module.exports = function(app,apiRoutes) {
     });
 
     apiRoutes.get('/check', function(req, res) {
-        res.json(req.decoded);
+        res.json(req.user.username);
+        console.log(req.user.username);
     });
     
     // We are going to protect /api routes with JWT
