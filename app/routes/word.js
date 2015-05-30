@@ -69,7 +69,7 @@ module.exports = function(app,wordRoutes) {
 
                 //word.text = req.body.text;
                 word.feeling = req.body.feeling;
-                word.enabled = req.body.enabled;
+                word.enabled =  true;//req.body.enabled;
                 word.last_user_id = req.user._id;
                 console.log(word.text,word.feeling,word.word_type);
 
@@ -86,6 +86,20 @@ module.exports = function(app,wordRoutes) {
 
         // delete the word with this id (accessed at DELETE http://localhost:8080/api/word/:word_text)
         .delete(function(req, res) {
+            Word.findOne({text: req.params.word_text}, function(err, word) {
+                
+                word.enabled = false;
+                word.last_user_id = req.user._id;
+
+                // save the word
+                word.save(function(err) {
+                    if (err)
+                        res.send(err);
+
+                    res.json({ message: 'Word disabled!' });
+                });
+            });
+            /*
             Word.remove({
                 text: req.params.word_text
                 //_id: req.params.word_id
@@ -95,6 +109,7 @@ module.exports = function(app,wordRoutes) {
 
                 res.json({ message: 'Word successfully deleted' });
             });
+            */
         });
     
     // We are going to protect /api/words routes with JWT
