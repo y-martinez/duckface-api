@@ -45,33 +45,32 @@ module.exports = function(app,wordRoutes) {
         });
 
 
-    // on routes that end in /words/:word_id
+    // on routes that end in /words/:word_text
     // ----------------------------------------------------
-    wordRoutes.route('/words/:word_id')
+    wordRoutes.route('/words/:word_text')
 
-        // get the word with that id (accessed at GET http://localhost:8080/api/word/:word_id)
+        // get the word with that id (accessed at GET http://localhost:8080/api/word/:word_text)
         .get(function(req, res) {
-            Word.findById(req.params.bear_id, function(err, word) {
+            Word.findOne({text: req.params.word_text}, function(err, word) {
                 if (err)
                     res.send(err);
                 res.json(word);
             });
         })
 
-        // update the word with this id (accessed at PUT http://localhost:8080/api/word/:word_id)
+        // update the word with this id (accessed at PUT http://localhost:8080/api/word/:word_text)
         .put(function(req, res) {
 
             // use our word model to find the word we want
-            Word.findById(req.params.bear_id, function(err, word) {
+            Word.findOne({text: req.params.word_text}, function(err, word) {
 
                 if (err)
                     res.send(err);
 
-                word.text = req.body.text;
+                //word.text = req.body.text;
                 word.feeling = req.body.feeling;
-                word.enabled = true;
-                word.last_user_id = req.params.user.username;
-                word.word_type = req.body.word_type;
+                word.enabled = req.body.enabled;
+                word.last_user_id = req.user._id;
                 console.log(word.text,word.feeling,word.word_type);
 
                 // save the word
@@ -85,10 +84,11 @@ module.exports = function(app,wordRoutes) {
             });
         })
 
-        // delete the word with this id (accessed at DELETE http://localhost:8080/api/word/:word_id)
+        // delete the word with this id (accessed at DELETE http://localhost:8080/api/word/:word_text)
         .delete(function(req, res) {
             Word.remove({
-                _id: req.params.word_id
+                text: req.params.word_text
+                //_id: req.params.word_id
             }, function(err, word) {
                 if (err)
                     res.send(err);
@@ -97,7 +97,7 @@ module.exports = function(app,wordRoutes) {
             });
         });
     
-    // We are going to protect /api routes with JWT
+    // We are going to protect /api/words routes with JWT
     app.use('/api/words', expressJwt({secret: app.get('superSecret')}));
 
 }
