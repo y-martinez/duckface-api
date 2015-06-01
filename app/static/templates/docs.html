@@ -1,0 +1,1424 @@
+
+<html>
+<head>
+  <title>Duckbook API</title>
+
+<style>
+@charset "utf-8";
+
+* {
+	margin:0;
+	padding:0;
+}
+
+/** General Style Info **/
+body {
+	//background: #003d4c;
+	color: #fff;
+	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
+	font-size:90%;
+	margin: 0;
+}
+a {
+	color: #003d4c;
+	text-decoration: underline;
+	font-weight: bold;
+}
+a img {
+	border:none;
+}
+h1, h2, h3, h4 {
+	font-weight: normal;
+	margin-bottom:0.5em;
+}
+h1 {
+	background:#fff;
+	color: #003d4c;
+	font-size: 100%;
+}
+h2 {
+	background:#fff;
+	color: #e32;
+	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
+	font-size: 190%;
+}
+h3 {
+	color: #2c6877;
+	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
+	font-size: 165%;
+}
+h4 {
+	color: #993;
+	font-weight: normal;
+}
+ul, li {
+	margin: 0 12px;
+}
+p {
+	margin: 0 0 1em 0;
+}
+
+/** Layout **/
+#container {
+	text-align: left;
+}
+
+#header{
+	background-color: #1E3E4A;
+	padding: 10px 20px;
+}
+#header h1 {
+	line-height:20px;
+	background: #1E3E4A;
+	color: #1E3E4A;
+	padding: 0px 30px;
+}
+#header h1 a {
+	color: #fff;
+	background: #1E3E4A;
+	font-weight: normal;
+	text-decoration: none;
+}
+#content{
+	background: #fff;
+	clear: both;
+	color: #333;
+	padding: 10px 20px 40px 20px;
+	overflow: auto;
+}
+#footer {
+	clear: both;
+	padding: 6px 10px;
+	text-align: right;
+}
+
+/** containers **/
+div.form,
+div.index,
+div.view {
+	float:right;
+	width:76%;
+	border-left:1px solid #666;
+	padding:10px 2%;
+}
+div.actions {
+	float:left;
+	width:16%;
+	padding:10px 1.5%;
+}
+div.actions h3 {
+	padding-top:0;
+	color:#777;
+}
+
+
+/** Tables **/
+table {
+	border-right:0;
+	clear: both;
+	color: #333;
+	margin-bottom: 10px;
+	width: 100%;
+}
+th {
+	border:0;
+	border-bottom:2px solid #555;
+	text-align: left;
+	padding:4px;
+}
+th a {
+	display: block;
+	padding: 2px 4px;
+	text-decoration: none;
+}
+th a.asc:after {
+	content: ' ⇣';
+}
+th a.desc:after {
+	content: ' ⇡';
+}
+table tr td {
+	padding: 6px;
+	text-align: left;
+	vertical-align: top;
+	border-bottom:1px solid #ddd;
+}
+table tr:nth-child(even) {
+	background: #f9f9f9;
+}
+td.actions {
+	text-align: center;
+	white-space: nowrap;
+}
+table td.actions a {
+	margin: 0px 6px;
+	padding:2px 5px;
+}
+
+/* SQL log */
+.cake-sql-log {
+	background: #fff;
+}
+.cake-sql-log td {
+	padding: 4px 8px;
+	text-align: left;
+	font-family: Monaco, Consolas, "Courier New", monospaced;
+}
+.cake-sql-log caption {
+	color:#fff;
+}
+
+/** Paging **/
+.paging {
+	background:#fff;
+	color: #ccc;
+	margin-top: 1em;
+	clear:both;
+}
+.paging .current,
+.paging .disabled,
+.paging a {
+	text-decoration: none;
+	padding: 5px 8px;
+	display: inline-block
+}
+.paging > span {
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-left: 0;
+}
+.paging > span {
+	background: #efefef;
+}
+.paging .prev {
+	border-left: 1px solid #ccc;
+	-moz-border-radius: 4px 0 0 4px;
+	-webkit-border-radius: 4px 0 0 4px;
+	border-radius: 4px 0 0 4px;
+}
+.paging .next {
+	-moz-border-radius: 0 4px 4px 0;
+	-webkit-border-radius: 0 4px 4px 0;
+	border-radius: 0 4px 4px 0;
+}
+.paging .disabled {
+	color: #ddd;
+}
+.paging .disabled {
+	background: transparent;
+}
+.paging .current {
+	background: #efefef;
+	color: #c73e14;
+}
+
+/** Scaffold View **/
+dl {
+	line-height: 2em;
+	margin: 0em 0em;
+	width: 60%;
+}
+dl dd:nth-child(4n+2),
+dl dt:nth-child(4n+1) {
+	background: #f4f4f4;
+}
+
+dt {
+	font-weight: bold;
+	padding-left: 4px;
+	vertical-align: top;
+	width: 10em;
+}
+dd {
+	margin-left: 10em;
+	margin-top: -2em;
+	vertical-align: top;
+}
+
+/** Forms **/
+form {
+	clear: both;
+	margin-right: 20px;
+	padding: 0;
+	width: 95%;
+}
+fieldset {
+	border: none;
+	margin-bottom: 1em;
+	padding: 16px 10px;
+}
+fieldset legend {
+	color: #e32;
+	font-size: 160%;
+	font-weight: bold;
+}
+fieldset fieldset {
+	margin-top: 0;
+	padding: 10px 0 0;
+}
+fieldset fieldset legend {
+	font-size: 120%;
+	font-weight: normal;
+}
+fieldset fieldset div {
+	clear: left;
+	margin: 0 20px;
+}
+form div {
+	clear: both;
+	margin-bottom: 1em;
+	padding: .5em;
+	vertical-align: text-top;
+}
+form .input {
+	color: #444;
+}
+form .required {
+	font-weight: bold;
+}
+form .required label:after {
+	color: #e32;
+	content: '*';
+	display:inline;
+}
+form div.submit {
+	border: 0;
+	clear: both;
+	margin-top: 10px;
+}
+label {
+	display: block;
+	font-size: 110%;
+	margin-bottom:3px;
+}
+input, textarea {
+	clear: both;
+	font-size: 140%;
+	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
+	padding: 1%;
+	width:98%;
+}
+select {
+	clear: both;
+	font-size: 120%;
+	vertical-align: text-bottom;
+}
+select[multiple=multiple] {
+	width: 100%;
+}
+option {
+	font-size: 120%;
+	padding: 0 3px;
+}
+input[type=checkbox] {
+	clear: left;
+	float: left;
+	margin: 0px 6px 7px 2px;
+	width: auto;
+}
+div.checkbox label {
+	display: inline;
+}
+input[type=radio] {
+	float:left;
+	width:auto;
+	margin: 6px 0;
+	padding: 0;
+	line-height: 26px;
+}
+.radio label {
+	margin: 0 0 6px 20px;
+	line-height: 26px;
+}
+input[type=submit] {
+	display: inline;
+	font-size: 110%;
+	width: auto;
+}
+form .submit input[type=submit] {
+	background:#62af56;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#76BF6B), to(#3B8230));
+	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
+	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
+	border-color: #2d6324;
+	color: #fff;
+	text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0px;
+	padding: 8px 10px;
+}
+form .submit input[type=submit] {
+	background: #5BA150;
+}
+button {
+	display: inline;
+	font-size: 110%;
+	width: auto;
+}
+form .button button {
+	/*linear-gradient(#04519b, #033c73 60%, #02325f)*/
+	/*-webkit-gradient(linear, 0 0, 0 100%, from(#), color-stop(60%, #), to(#))*/
+	background:#62af56;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#04519b), to(#02325f));
+	background-image: -webkit-linear-gradient(top, #04519b, #02325f);
+	background-image: -moz-linear-gradient(top, #04519b, #02325f);
+	border-color: #033c73;
+	color: #fff;
+	text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0px;
+	padding: 8px 10px;
+}
+form .button button {
+	background: #04519b;
+}
+/* Form errors */
+form .error {
+	background: #FFDACC;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	font-weight: normal;
+}
+form .error-message {
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	border-radius: none;
+	border: none;
+	background: none;
+	margin: 0;
+	padding-left: 4px;
+	padding-right: 0;
+}
+form .error,
+form .error-message {
+	color: #9E2424;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-ms-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	text-shadow: none;
+}
+
+/** Notices and Errors **/
+.message {
+	clear: both;
+	color: #fff;
+	font-size: 140%;
+	font-weight: bold;
+	margin: 0 0 1em 0;
+	padding: 5px;
+}
+
+.success,
+.message,
+.cake-error,
+.cake-debug,
+.notice,
+p.error,
+.error-message {
+	background: #ffcc00;
+	background-repeat: repeat-x;
+	background-image: -moz-linear-gradient(top, #ffcc00, #E6B800);
+	background-image: -ms-linear-gradient(top, #ffcc00, #E6B800);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ffcc00), to(#E6B800));
+	background-image: -webkit-linear-gradient(top, #ffcc00, #E6B800);
+	background-image: -o-linear-gradient(top, #ffcc00, #E6B800);
+	background-image: linear-gradient(top, #ffcc00, #E6B800);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	margin-bottom: 18px;
+	padding: 7px 14px;
+	color: #404040;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.success,
+.message,
+.cake-error,
+p.error,
+.error-message {
+	clear: both;
+	color: #fff;
+	background: #c43c35;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	background-repeat: repeat-x;
+	background-image: -moz-linear-gradient(top, #ee5f5b, #c43c35);
+	background-image: -ms-linear-gradient(top, #ee5f5b, #c43c35);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ee5f5b), to(#c43c35));
+	background-image: -webkit-linear-gradient(top, #ee5f5b, #c43c35);
+	background-image: -o-linear-gradient(top, #ee5f5b, #c43c35);
+	background-image: linear-gradient(top, #ee5f5b, #c43c35);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+.success {
+	clear: both;
+	color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	background: #3B8230;
+	background-repeat: repeat-x;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#76BF6B), to(#3B8230));
+	background-image: -webkit-linear-gradient(top, #76BF6B, #3B8230);
+	background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
+	background-image: -ms-linear-gradient(top, #76BF6B, #3B8230);
+	background-image: -o-linear-gradient(top, #76BF6B, #3B8230);
+	background-image: linear-gradient(top, #76BF6B, #3B8230);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+p.error {
+	font-family: Monaco, Consolas, Courier, monospace;
+	font-size: 120%;
+	padding: 0.8em;
+	margin: 1em 0;
+}
+p.error em {
+	font-weight: normal;
+	line-height: 140%;
+}
+.notice {
+	color: #000;
+	display: block;
+	font-size: 120%;
+	padding: 0.8em;
+	margin: 1em 0;
+}
+.success {
+	color: #fff;
+}
+
+/**  Actions  **/
+.actions ul {
+	margin: 0;
+	padding: 0;
+}
+.actions li {
+	margin:0 0 0.5em 0;
+	list-style-type: none;
+	white-space: nowrap;
+	padding: 0;
+}
+.actions ul li a {
+	font-weight: normal;
+	display: block;
+	clear: both;
+}
+
+/* Buttons and button links */
+button, input[type=submit],
+.actions ul li a,
+.actions a {
+	font-weight:normal;
+	padding: 4px 8px;
+	background: #dcdcdc;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));
+	background-image: -webkit-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -o-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: linear-gradient(top, #fefefe, #dcdcdc);
+	color:#333;
+	border:1px solid #bbb;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	text-decoration: none;
+	text-shadow: #fff 0px 1px 0px;
+	min-width: 0;
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+	-webkit-user-select: none;
+	user-select: none;
+}
+.actions ul li a,
+.actions a {
+	background: #ededed;
+	border-color: #acacac;
+	text-decoration: none;
+}
+button:active, input[type=submit]:active,
+.actions ul li a:active,
+.actions a:active {
+	background: #eee;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#dfdfdf), to(#eee));
+	background-image: -webkit-linear-gradient(top, #dfdfdf, #eee);
+	background-image: -moz-linear-gradient(top, #dfdfdf, #eee);
+	background-image: -ms-linear-gradient(top, #dfdfdf, #eee);
+	background-image: -o-linear-gradient(top, #dfdfdf, #eee);
+	background-image: linear-gradient(top, #dfdfdf, #eee);
+	text-shadow: #eee 0px 1px 0px;
+	-moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
+	border-color: #aaa;
+	text-decoration: none;
+}
+
+/** Related **/
+.related {
+	clear: both;
+	display: block;
+}
+
+/** Debugging **/
+pre {
+	color: #000;
+	background: #f0f0f0;
+	padding: 15px;
+	-moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.cake-debug-output {
+	padding: 0;
+	position: relative;
+}
+.cake-debug-output > span {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: rgba(255, 255, 255, 0.3);
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	padding: 5px 6px;
+	color: #000;
+	display: block;
+	float: left;
+	-moz-box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.5);
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+.cake-debug,
+.cake-error {
+	font-size: 16px;
+	line-height: 20px;
+	clear: both;
+}
+.cake-error > a {
+	text-shadow: none;
+}
+.cake-error {
+	white-space: normal;
+}
+.cake-stack-trace {
+	background: rgba(255, 255, 255, 0.7);
+	color: #333;
+	margin: 10px 0 5px 0;
+	padding: 10px 10px 0 10px;
+	font-size: 120%;
+	line-height: 140%;
+	overflow: auto;
+	position: relative;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+.cake-stack-trace a {
+	text-shadow: none;
+	background: rgba(255, 255, 255, 0.7);
+	padding: 5px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	margin: 0px 4px 10px 2px;
+	font-family: sans-serif;
+	font-size: 14px;
+	line-height: 14px;
+	display: inline-block;
+	text-decoration: none;
+	-moz-box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
+}
+.cake-code-dump pre {
+	position: relative;
+	overflow: auto;
+}
+.cake-context {
+	margin-bottom: 10px;
+}
+.cake-stack-trace pre {
+	color: #000;
+	background-color: #F0F0F0;
+	margin: 0px 0 10px 0;
+	padding: 1em;
+	overflow: auto;
+	text-shadow: none;
+}
+.cake-stack-trace li {
+	padding: 10px 5px 0px;
+	margin: 0 0 4px 0;
+	font-family: monospace;
+	border: 1px solid #bbb;
+	-moz-border-radius: 4px;
+	-wekbkit-border-radius: 4px;
+	border-radius: 4px;
+	background: #dcdcdc;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));
+	background-image: -webkit-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -moz-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -ms-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: -o-linear-gradient(top, #fefefe, #dcdcdc);
+	background-image: linear-gradient(top, #fefefe, #dcdcdc);
+}
+/* excerpt */
+.cake-code-dump pre,
+.cake-code-dump pre code {
+	clear: both;
+	font-size: 12px;
+	line-height: 15px;
+	margin: 4px 2px;
+	padding: 4px;
+	overflow: auto;
+}
+.cake-code-dump .code-highlight {
+	display: block;
+	background-color: rgba(255, 255, 0, 0.5);
+}
+.code-coverage-results div.code-line {
+	padding-left:5px;
+	display:block;
+	margin-left:10px;
+}
+.code-coverage-results div.uncovered span.content {
+	background:#ecc;
+}
+.code-coverage-results div.covered span.content {
+	background:#cec;
+}
+.code-coverage-results div.ignored span.content {
+	color:#aaa;
+}
+.code-coverage-results span.line-num {
+	color:#666;
+	display:block;
+	float:left;
+	width:20px;
+	text-align:right;
+	margin-right:5px;
+}
+.code-coverage-results span.line-num strong {
+	color:#666;
+}
+.code-coverage-results div.start {
+	border:1px solid #aaa;
+	border-width:1px 1px 0px 1px;
+	margin-top:30px;
+	padding-top:5px;
+}
+.code-coverage-results div.end {
+	border:1px solid #aaa;
+	border-width:0px 1px 1px 1px;
+	margin-bottom:30px;
+	padding-bottom:5px;
+}
+.code-coverage-results div.realstart {
+	margin-top:0px;
+}
+.code-coverage-results p.note {
+	color:#bbb;
+	padding:5px;
+	margin:5px 0 10px;
+	font-size:10px;
+}
+.code-coverage-results span.result-bad {
+	color: #a00;
+}
+.code-coverage-results span.result-ok {
+	color: #fa0;
+}
+.code-coverage-results span.result-good {
+	color: #0a0;
+}
+
+/** Elements **/
+#url-rewriting-warning {
+	display:none;
+}
+
+h3 {
+	margin-bottom: 0px;
+}
+
+label {
+	font-weight: bold;
+}
+
+label:after {
+	content:": ";
+}
+
+ul {
+	margin: 0px 18px 10px 18px;
+}
+
+li {
+	margin: 0px 18px 2px 18px;
+}
+
+li label {
+	display: inline;
+	font-size: 90%;
+}
+
+a {
+	color: #333;
+	text-decoration: none;
+	font-weight: normal;
+	margin-left: 18px;
+	margin-bottom: 10px;
+	display: block;
+}
+
+.function {
+	cursor: pointer;
+	border-radius: 10px 10px 10px 10px;
+	-moz-border-radius: 10px 10px 10px 10px;
+	-webkit-border-radius: 10px 10px 10px 10px;
+	border: 2px solid #003d4c;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.content {
+	display: none;
+	margin-top: 10px;
+}
+
+.field_none {
+	font-style: italic;
+}
+
+#headerText{
+	float: right;
+}
+p {
+	color: black;
+}
+#someRubyText {
+	color: white;
+}
+</style>
+
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script>
+
+$(document).ready(function () {
+	$("h3").bind('click', function(){
+		$(this).parent().find(".content").slideToggle( "slow" );
+	});
+	
+	$("a").bind('click', function(){
+		var domain = window.location.href;
+		domain = domain.substring(0, domain.length - 1) + $(this).html();
+		
+		window.location = domain;
+		
+		return false;
+	});
+});
+
+</script>
+
+</head>
+<body>
+	<div id="container">
+
+		<div id="header">
+			<div id="headerText"><h1><p id="someRubyText">Express.js</p></h1></div>
+			<div id="imageDiv"><img src="http://www.ciens.ucv.ve/ajaxati/images/logo.png" height="42" width="42" /></div>
+		</div>
+		<div id="content">
+
+<h2>Documentaci&oacute;n API - Duckbook</h2>
+
+<div class="function">
+	<h3>Registrar un usuario nuevo</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users</p>
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>POST</li>
+		</ul>
+		<label>Parametros</label>
+		<p>(Enviados mediante x-www-form-urlencoded)</p>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none"><label>username</label>Apodo y m&eacute;todo de ingreso del usuario</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none"><label>password</label>Contrase&ntilde;a del usuario para ingresar al sistema</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none"><label>name</label>Nombre del usuario nuevo</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none"><label>lastname</label>Apellido del usuario nuevo</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Status 200</label>Usuario agregado</li>
+					<li>message:'User created!'</li>
+					<li><label>ERROR</label>Usuario no agregado</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>
+				<li>JSON</li>
+				<ul>
+					<li><label>Agregar usuario, obtener respuesta en json</label><p>/api/users<p></li>
+				</ul>
+			   
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Listar un Usuario</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users/:username</p>
+			
+		<label>Metodos/Verbos</label>
+		<p>(El usuario debe estar autenticado)</p>
+		<ul>
+			<li>GET</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:username</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label>string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Si el usuario existe</label>User</li>
+					<li><label>Si el usuario no existe</label>ERROR</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>	
+				<li>JSON</li>
+				<ul>
+					<li><label>Listar un usuario, obtener respuesta en json</label><p>/api/user/juan<p></li>
+				</ul>		
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Autenticar un usuario</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/authenticate</p>
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>POST</li>
+		</ul>
+		<label>Parametros</label>
+		<p>(Enviados mediante x-www-form-urlencoded)</p>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none"><label>username</label>Apodo y m&eacute;todo de ingreso del usuario</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none"><label>password</label>Contrase&ntilde;a del usuario para ingresar al sistema</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Status 200</label></li>
+					<li>success: booleano que retorna true si se encontr&oacute; el usuario, false en caso contrario</li>
+					<li>message:'Enjoy your token!'</li>
+					<li>token: string_que_sera_token</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>
+				<li>JSON</li>
+				<ul>
+					<li><label>Autenticar usuario, obtener respuesta en json</label><p>/api/authenticate<p></li>
+				</ul>
+			   
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Listado de Palabras</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/words</p>
+		<label>Metodos/Verbos</label>
+		<p>(El usuario debe estar autenticado)</p>
+		<ul>
+			<li>GET</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">Ninguno</li>
+			</ul>
+		</ul>
+		<!--<ul>
+			<li>Opcionales</li>
+			<ul>
+				<li class="field_none">page</li>
+					<ul>
+						<li class="field_name"><label>Tipo</label>numero entero mayor a cero</li>
+						<li class="field_name"><label>Representacion</label>Representa cuantos pasties son devueltos, cada pagina consta de 5 pasties</li>
+					</ul>
+			</ul>
+		</ul>-->
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+			<ul>
+				<li>Listado de todas las palabras</li>
+			</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>
+			<li>JSON</li>
+			<ul>
+				<li><label>Listar en JSON</label><p>/api/words<p></li>
+			</ul>
+		</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Listar una palabra</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/words/:word_text</p>
+			
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>GET</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:word_text</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label>string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Si la palabra existe</label>Palabra</li>
+					<li><label>Si la palabra no existe</label>null</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>	
+				<li>JSON</li>
+				<ul>
+					<li><label>Listar una palabra, obtener respuesta en json</label><p>/api/words/palabra<p></li>
+				</ul>		
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Agregar una palabra</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/words</p>
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>POST</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">text</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none">feeling</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> n&uacute;mero entero</li>
+				</ul>
+				<li class="field_none">word_type</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+		</ul>
+
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Status 200</label>Palabra agregado</li>
+					<li>message:'Word created!'</li>
+					<li><label>ERROR</label>Palabra no agregado</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>
+				<li>JSON</li>
+				<ul>
+					<li><label>Agregar una palabra, obtener respuesta en json</label><p>/api/words<p></li>
+				</ul>
+			   
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Actualizar una palabra</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/words/:word_text</p>
+
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>PUT</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:word_text</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none">feeling</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> n&uacute;mero entero</li>
+				</ul>
+			</ul>
+
+		</ul>
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+			<ul>
+				<li><label>Status 200</label>Palabra actualizada</li>
+				<li>message:'Word updated!'</li>
+				<li><label>ERROR</label>Palabra no actualizada</li>
+			</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>				
+			<li>JSON</li>
+			<ul>
+				<li><label>Actualizar palabra, obtener respuesta en json</label><p>/api/words<p></li>
+			</ul>
+						
+		</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Eliminar una palabra</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/words/:word_text</p>
+				
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>DELETE</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:word_text</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+			<ul>
+				<li><label>Status 200</label>palabra eliminada</li>
+				<li>message:'Word deleted!'</li>
+				<li><label>ERROR</label>palabra no eliminada</li>
+			</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>
+			<li>JSON</li>
+			<ul>
+				<li><label>Eliminar palabra, obtener respuesta en json</label><p>/api/words/palabra<p></li>
+			</ul>			
+		</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Listado de Tweets</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/dual</p>
+		<label>Metodos/Verbos</label>
+		<p>(El usuario debe estar autenticado)</p>
+		<ul>
+			<li>GET</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">Ninguno</li>
+			</ul>
+		</ul>
+
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+			<ul>
+				<li>Listado de todos los tweets</li>
+			</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>
+			<li>JSON</li>
+			<ul>
+				<li><label>Listar en JSON</label><p>/api/dual<p></li>
+			</ul>
+		</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Listar un Tweet</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users/:username/tweets/:tweet_id</p>
+			
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>GET</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:username</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label>string</li>
+				</ul>
+			</ul>
+			<ul>
+				<li class="field_none">:tweet_id</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label>string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Si el tweet existe</label>Tweet</li>
+					<li><label>Si el tweet no existe</label>ERROR</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>	
+				<li>JSON</li>
+				<ul>
+					<li><label>Listar un tweet, obtener respuesta en json</label><p>/api/users/juan/tweets/51d27328a<p></li>
+				</ul>		
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Agregar un Tweet</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users/:username/tweets</p>
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>POST</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:username</li>
+					<ul>
+						<li class="field_name"><label>Tipo</label> string</li>
+					</ul>
+				<li class="field_none">content</li>
+					<ul>
+						<li class="field_name"><label>Tipo</label> string</li>
+					</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+			<ul>
+				<li>Mensaje</li>
+				<ul>
+					<li><label>Status 200</label>Tweet agregado</li>
+					<li>success: booleano que es true si se puedo agregar, false en caso contrario</li>
+					<li>message:'Tweet created!'</li>
+					<li>message: 'Inexistent word(s) in tweet'</li>
+					<li><label>ERROR</label>Tweet no agregado</li>
+				</ul>
+			</ul>
+			<label>Ejemplo de llamada</label>
+			<ul>
+				<li>JSON</li>
+				<ul>
+					<li><label>Agregar tweet, obtener respuesta en json</label><p>/api/users/juan/tweets<p></li>
+				</ul>
+			   
+			</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Actualizar un Tweet</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users/:username/tweets/:tweet_id</p>
+
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>PUT</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:username</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none">:tweet_id</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none">content</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+
+		</ul>
+
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+				<ul>
+					<li><label>Status 200</label>Tweet actualizado</li>
+					<li>success: booleano que es true si se puedo actualizar, false en caso contrario</li>
+					<li>message:'Tweet created!'</li>
+					<li>message: 'Inexistent word(s) in tweet'</li>
+					<li><label>ERROR</label>Tweet no actualizado</li>
+				</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>				
+			<li>JSON</li>
+			<ul>
+				<li><label>Actualizar tweet, obtener respuesta en json</label><p>/api/users/juan/tweets/51d27328a<p></li>
+			</ul>
+						
+		</ul>
+	</div>
+</div>
+
+<div class="function">
+	<h3>Eliminar un Pastie</h3>
+	<div class="content">
+		<label>Url</label>
+		<p>/api/users/:username/tweets/:tweet_id</p>
+				
+		<label>Metodos/Verbos</label>
+		<ul>
+			<li>DELETE</li>
+		</ul>
+		<label>Parametros</label>
+		<ul>
+			<li>Obligatorios</li>
+			<ul>
+				<li class="field_none">:username</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+				<li class="field_none">:tweet_id</li>
+				<ul>
+					<li class="field_name"><label>Tipo</label> string</li>
+				</ul>
+			</ul>
+		</ul>
+		<label>Respuesta</label>
+		<ul>
+			<li>Mensaje</li>
+			<ul>
+				<li><label>OK 200</label>tweet eliminado</li>
+				<li><label>ERROR</label>tweet no eliminado</li>
+			</ul>
+		</ul>
+		<label>Ejemplo de llamada</label>
+		<ul>
+			<li>JSON</li>
+			<ul>
+				<li><label>Eliminar tweet, obtener respuesta en json</label><p>/api/users/juan/tweets/51d27328a<p></li>
+			</ul>			
+		</ul>
+	</div>
+</div>
+
+</div>
+
+<div>
+	<p><strong>--NOTAS:</strong></p>
+	<ul>
+		<li><p>Los IDs son &uacute;nicos y hexadecimales</p></li>
+		<li><p>Las palabras son mostradas de la mas antiguo a la mas reciente (creado o actualizado)</p></li>
+		<li><p>Si tiene conocimiento de alguna otra herramienta para verificar el funcionamiento del servicio la puede usar, por ejemplo: el comando curl de UNIX o Postman</p></li>
+	</ul>
+
+</body>
+</html>

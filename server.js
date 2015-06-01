@@ -35,6 +35,15 @@ app.get('/', function(req, res) {
     res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
+// TODO: move this to routes/default.js
+// registering docs view
+app.get('/api/docs',function(req,res){
+    
+    //console.log(__dirname);   
+    res.sendFile(__dirname+'/app/static/templates/docs.html');
+
+});
+
 // ---------------------------------------------------------
 // get an instance of the router for api routes
 // ---------------------------------------------------------

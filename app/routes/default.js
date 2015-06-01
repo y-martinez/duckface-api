@@ -89,25 +89,15 @@ module.exports = function(app,apiRoutes) {
         }
     });
 
-    // ---------------------------------------------------------
-    // authenticated routes
-    // ---------------------------------------------------------
+    /*    
+    apiRoutes.get('/docs', function(req, res) {
 
-    apiRoutes.get('/restricted', function (req, res) {
-        console.log('Someone is calling /api/restricted');
-        res.json({
-            name: 'foo'
-        });
+        res.sendFile(__dirname + '/app/static/templates/docs.html');
+        
     });
+    */
 
-    apiRoutes.get('/check', function(req, res) {
-        res.json(req.user.username);
-        console.log(req.user.username);
-    });
-    
     // We are going to protect /api routes with JWT
-    app.use('/api/check', expressJwt({secret: app.get('superSecret')}));
-    app.use('/api/restricted', expressJwt({secret: app.get('superSecret')}));
     app.use('/api/users/:username', expressJwt({secret: app.get('superSecret')}));
 
 }

@@ -201,6 +201,6 @@ module.exports = function(app,tweetRoutes) {
     
     // We are going to protect /api/words routes with JWT
     app.use('/api/dual', expressJwt({secret: app.get('superSecret')}));
-    app.use('/api/users/tweets', expressJwt({secret: app.get('superSecret')}));    
+    //app.use('/api/users/:username/tweets', expressJwt({secret: app.get('superSecret')}));    
 
 }
