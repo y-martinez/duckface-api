@@ -8,11 +8,23 @@ var TweetSchema = new Schema({
         ref: 'User'
     },
 
+    content: {
+        type: String,
+        required: true
+    },
+
+    /*
+    words_ids: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Word'
+    }],
+    */
+
     date:{
         type: Date,
-        required:true
+        required: true
     }
 
 });
 
-module.exports = mongoose.model('Word', WordSchema);
+module.exports = mongoose.model('Tweet', TweetSchema);
