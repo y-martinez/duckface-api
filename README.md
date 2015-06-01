@@ -1,19 +1,20 @@
-# ExpressJsTokenAuthExample
-This is an example project made in ExpressJs, using jsonwebtoken authentication, based on https://github.com/auth0/angular-token-auth.git but focused more in server side 
+# Duckbook - API
+El API realizado para la elaboración de la red social de Duckface
 
 ### Build and Run
 
-First, install dependencies using npm:
+Primero, instalar dependencias usando npm:
 
 ```sh
 npm install
 ```
 
-Run the example:
+Ejecutar el proyecto:
 
 ```sh
 node server.js
 ```
 
-and go to [localhost:8080](http://localhost:8080).
+E ir a [localhost:8080/api](http://localhost:8080/api).
  
+La documentación puede ser encontrada en [localhost:8080/api/docs](http://localhost:8080/api/docs).
