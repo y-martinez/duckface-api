@@ -99,75 +99,108 @@ module.exports = function(app,tweetRoutes) {
             });
         });
 
-    /*
+    
     // on routes that end in /users/:username/tweets/:tweet_id
     // ----------------------------------------------------
     tweetRoutes.route('/users/:username/tweets/:tweet_id')
 
-        // get the word with that id (accessed at GET http://localhost:8080/api/users/:username/tweets)
+        // get the tweet with that id (accessed at GET http://localhost:8080/api/users/:username/tweets/:tweet_id)
         .get(function(req, res) {
-            Word.findOne({text: req.params.word_text}, function(err, word) {
+            Tweet.findById(req.params.tweet_id, function(err, tweet) {
                 if (err)
                     res.send(err);
-                res.json(word);
+                res.json(tweet);
             });
         })
-
-        // update the word with this id (accessed at PUT http://localhost:8080/api/word/:word_text)
+        //*
+        // update the tweet with this id (accessed at PUT http://localhost:8080/api/users/:username/tweets/:tweet_id)
         .put(function(req, res) {
 
-            // use our word model to find the word we want
-            Word.findOne({text: req.params.word_text}, function(err, word) {
+            var content = req.body.content;
+            var scs = true;
+            var msg = 'Tweet updated!';
+            var words = content.split(' '); // separate by space
+            words = words.filter(function(value){return value!='';}); // remove extra spaces
 
-                if (err)
-                    res.send(err);
+            console.log(words);
 
-                //word.text = req.body.text;
-                word.feeling = req.body.feeling;
-                word.enabled =  true;//req.body.enabled;
-                word.last_user_id = req.user._id;
-                console.log(word.text,word.feeling,word.word_type);
-
-                // save the word
-                word.save(function(err) {
-                    if (err)
-                        res.send(err);
-
-                    res.json({ message: 'Word updated!' });
+            size = words.length;
+              
+            // Array to hold async tasks
+            var asyncTasks = [];
+             
+            // Loop through words
+            words.forEach(function(word){
+                // We don't actually execute the async action here
+                // We add a function containing it to an array of "tasks"
+                asyncTasks.push(function(callback){
+                    // Call an async function, often a save() to DB
+                    Word.findOne({text: word}, function(err, w) {
+                        if (err)
+                            res.send(err);
+                        // if word is found
+                        console.log(w);
+                        if (w == null){
+                            //console.log(msg);
+                            scs = false;
+                            msg = "Inexistent word(s) in tweet";
+                        }
+                        callback();
+                    });
                 });
-
             });
+             
+            // At this point, nothing has been executed.
+            // We just pushed all the async tasks into an array.
+            
+            // Then, whe add another task after iterations
+            asyncTasks.push(function(callback){
+                
+                if (scs){
+                    // finding tweet
+                    Tweet.findById(req.params.tweet_id, function(err, tweet) {
+
+                        if (err)
+                            res.send(err);
+                        tweet.content = words.join(' ');
+
+                        // save the tweet
+                        tweet.save(function(err) {
+                            if (err)
+                                res.send(err);
+                        });
+
+                    });
+                }
+                callback();
+            });
+             
+            // Now we have an array of functions doing async tasks
+            // Execute all async tasks in the asyncTasks array
+            async.series(asyncTasks, function(){
+                // All tasks are done now
+                res.json({ success: scs, message: msg });
+            });
+
         })
+        //*/
 
-        // delete the word with this id (accessed at DELETE http://localhost:8080/api/word/:word_text)
+        // delete the tweet with this id (accessed at DELETE http://localhost:8080/api/users/:username/tweets/:tweet_id)
         .delete(function(req, res) {
-            Word.findOne({text: req.params.word_text}, function(err, word) {
 
-                word.enabled = false;
-                word.last_user_id = req.user._id;
-
-                // save the word
-                word.save(function(err) {
-                    if (err)
-                        res.send(err);
-
-                    res.json({ message: 'Word disabled!' });
-                });
-            });
-            /*
-            Word.remove({
-                text: req.params.word_text
-                //_id: req.params.word_id
-            }, function(err, word) {
+            Tweet.remove({
+                _id: req.params.tweet_id
+            }, function(err, tweet) {
                 if (err)
                     res.send(err);
 
-                res.json({ message: 'Word successfully deleted' });
+                res.json({ message: 'Tweet successfully deleted' });
             });
-            */
-        //});
+            
+        });
     
     // We are going to protect /api/words routes with JWT
-    //app.use('/api/words', expressJwt({secret: app.get('superSecret')}));
+    app.use('/api/dual', expressJwt({secret: app.get('superSecret')}));
+    app.use('/api/users/tweets', expressJwt({secret: app.get('superSecret')}));    
 
 }

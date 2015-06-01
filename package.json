@@ -10,7 +10,7 @@
     "mongoose": "~4.0.3",
     "morgan": "~1.5.3",
     "cors": "~2.6.0",
-    "async": "latest"
+    "async": "~1.0.0"
   },
   "description": "Example of Token-based authentication in [AngularJS](http://angularjs.org) with [Express](http://expressjs.com).",
   "main": "server.js",
