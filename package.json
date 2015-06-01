@@ -1,5 +1,5 @@
 {
-  "name": "auth-token-template",
+  "name": "duckbook-api",
   "version": "0.0.1",
   "dependencies": {
     "body-parser": "^1.12.4",
@@ -12,7 +12,7 @@
     "cors": "~2.6.0",
     "async": "~1.0.0"
   },
-  "description": "Example of Token-based authentication in [AngularJS](http://angularjs.org) with [Express](http://expressjs.com).",
+  "description": "API from duckbook app.",
   "main": "server.js",
 
   "author": "Eisenheim38",
