@@ -26,9 +26,14 @@ app.use(cors());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
 // =================================================================
 // routes ==========================================================
 // =================================================================
+
+
 
 // basic route (http://localhost:8080)
 app.get('/', function(req, res) {
@@ -44,12 +49,21 @@ app.get('/api/docs',function(req,res){
 
 });
 
+app.get('/api/test/chat',function(req,res){
+    
+    //console.log(__dirname);   
+    res.sendFile(__dirname+'/app/static/templates/chat.html');
+
+});
+
+
 // ---------------------------------------------------------
 // get an instance of the router for api routes
 // ---------------------------------------------------------
 var apiRoutes 	= express.Router(),
 	wordRoutes 	= express.Router(),
-	tweetRoutes = express.Router(); 
+	tweetRoutes = express.Router(),
+	chatRoutes = express.Router();
 
 // loading default routes
 require('./app/routes/default.js')(app,apiRoutes);
@@ -60,18 +74,22 @@ require('./app/routes/word.js')(app,wordRoutes);
 // loading tweet routes
 require('./app/routes/tweet.js')(app,tweetRoutes);
 
+// loading chat router
+require('./app/routes/chat.js')(app,chatRoutes,io);
+
 app.use('/api', apiRoutes);
 app.use('/api', wordRoutes);
 app.use('/api', tweetRoutes);
+app.use('/api', chatRoutes);
 
 // Making prettier unauthorized method
 app.use(function(err, req, res, next){
     if (err.constructor.name === 'UnauthorizedError') {
-        res.status(401).send('Unauthorized');
+        res.status(401).send('Unauthorized :(');
     }
 });
 
 // Listening on port
-app.listen(port, function () {
+http.listen(port, function () {
     console.log('listening on http://localhost:'+port);
 });

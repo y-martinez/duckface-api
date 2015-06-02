@@ -88,14 +88,7 @@ module.exports = function(app,apiRoutes) {
             });
         }
     });
-
-    /*    
-    apiRoutes.get('/docs', function(req, res) {
-
-        res.sendFile(__dirname + '/app/static/templates/docs.html');
-        
-    });
-    */
+    
 
     // We are going to protect /api routes with JWT
     app.use('/api/users/:username', expressJwt({secret: app.get('superSecret')}));
