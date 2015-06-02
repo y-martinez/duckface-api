@@ -15,6 +15,7 @@ var config      = require('./config'); // get our config file
 // =================================================================
 var port = process.env.PORT || 8080; // port where app will be runing
 mongoose.connect(config.database); // connect to database
+mongoose.set('debug', true);
 app.set('superSecret', config.secret); // secret variable
 
 // use body parser so we can get info from POST and/or URL parameters
@@ -49,7 +50,7 @@ app.get('/api/docs',function(req,res){
 
 });
 
-app.get('/api/test/chat',function(req,res){
+app.get('/api/test/chat/:room',function(req,res){
     
     //console.log(__dirname);   
     res.sendFile(__dirname+'/app/static/templates/chat.html');
@@ -85,7 +86,8 @@ app.use('/api', chatRoutes);
 // Making prettier unauthorized method
 app.use(function(err, req, res, next){
     if (err.constructor.name === 'UnauthorizedError') {
-        res.status(401).send('Unauthorized :(');
+        //res.status(401).send('Unauthorized :(');
+        res.json(err);
     }
 });
 

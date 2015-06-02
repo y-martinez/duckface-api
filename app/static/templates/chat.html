@@ -18,21 +18,21 @@
     </style>
 
     <script>
-      var room = Number(window.location.pathname.match(\/chat\/([a-zA-Z]+\-[a-zA-Z]+)$/)[1]);
+      var room = window.location.pathname.match(/\/chat\/([a-zA-Z0-9]+)$/)[1];
       var socket = io.connect('localhost:8080');
-
+      console.log(room);
       socket.emit('login', {user: 'ybra1993', id: room});
 
       function submision(){
-        console.log("Epale menor");
-        socket.emit('chat message', $('#msg').val());
-        $('#msg').val('');
+        /*socket.emit('chat message', $('#msg').val());
+        $('#msg').val('');*/
+
+        socket.on('msg', function(data){
+          $('#messages').append($('<li>').text(data.user + " : " + data.msg));
+        });
+
         return false;
       };
-
-      socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
-      });
 
     </script>
 

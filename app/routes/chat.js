@@ -1,7 +1,7 @@
 
 
 module.exports = function(app, chatRoutes,io){
-
+	crypto = require("crypto")
 	var User = require('../models/user.js');
 	var Chat = require('../models/chat.js');
 	var Message = require ('../models/message.js');
@@ -34,22 +34,31 @@ module.exports = function(app, chatRoutes,io){
 		function(err,room_id){
 			if (err) throw err;
 			
-			if (!room_id){
+			if (room_id.length == 0){
+
+				console.log("creando el chat");
 				chat = new Chat();
-				chat.user1 = req.body.user1;
-				chat.user2 = req.body.user2;
+				chat.user1 = req.params.username1;
+				chat.user2 = req.body.username2;
 				chat.isActive = true;
 
-		        // save the chat and check for errors
-		        chat.save(function(err) {
-		            if (err)
-		                res.send(err);
+		        var concat = 'chat' + chat.user1 + chat.user2;
+		        console.log(concat);
+		    	var hash = crypto.createHash('md5').update(concat).digest('hex');
+		    	console.log(hash);
+		    	chat.room = hash;
 
-		            room_id = chat.room;
+		        chat.save(function(err) {
+		            if (err){
+		            	console.log("no se pudo crear el chat");
+		            	console.log(err);
+		                res.send(err);
+		            }else{
+
+		            }
 		        });
 			}
-
-			res.json(room_id);
+			res.json({room : chat.room});
 
 		});
 	});
@@ -85,7 +94,9 @@ module.exports = function(app, chatRoutes,io){
 
 		socket.on('load',function(data){
 
-			var room = findClientsSocket(io,data);
+			console.log("EPALEEEEEEEEEEE");
+
+			var room = findClientsSocket(io,data.id);
 			if(room.length === 0 ) {
 
 				socket.emit('peopleinchat', {number: 0});
@@ -114,7 +125,6 @@ module.exports = function(app, chatRoutes,io){
 
 			// Use the socket object to store data. Each client gets
 			// their own unique socket object
-
 			socket.username = data.user;
 			socket.room = data.id;
 
@@ -137,6 +147,7 @@ module.exports = function(app, chatRoutes,io){
 					users: usernames
 				});
 			}
+			console.log(socket);
 		});
 
 		// Somebody left the chat
@@ -158,7 +169,8 @@ module.exports = function(app, chatRoutes,io){
 
 		// Handle the sending of messages
 		socket.on('msg', function(data){
-
+			console.log("llego");
+			console.log(data);
 			// When the server receives a message, it sends it to the other person in the room.
 			socket.broadcast.to(socket.room).emit('receive', {msg: data.msg, user: data.user});
 		});
