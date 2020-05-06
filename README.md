@@ -1,26 +1,23 @@
 # Duckbook - API
-El API realizado para la elaboración de la red social de Duckface
+The API made for the development of the social network of Duckface
 
-### Base de Datos
+### Database
 
-Este api está desarrollado para utilizar mongoDB, al ejecutarlo usa (o crea en caso de no existir) una base de datos llamada 'duckbook-api' en el puerto 27017 (puerto por defecto de mongoDB). Puede encontrarse esta información en el archivo config.js
+This API was developed to use MongoDB, when running it uses (or creates if it does not exist) a database called 'duckbook-api' on port 27017 (MongoDB default port). This information can be found in the `config.js` file
 
 ### Build and Run
 
-Primero, instalar dependencias usando npm:
+First, install dependencies (you can check them in the `package.json` file)  using `npm` command:
 
-```sh
-npm install
-```
+> `npm install`
 
-Ejecutar el proyecto:
+For run the project use de following command:
 
-```sh
-node server.js
-```
+> `node server.js`
 
-E ir a [localhost:8080/api](http://localhost:8080/api).
+
+Lastly go to the link [localhost:8080/api](http://localhost:8080/api).
  
-La documentación puede ser encontrada en [localhost:8080/api/docs](http://localhost:8080/api/docs).
+Also, you can see the documentation in the link [localhost:8080/api/docs](http://localhost:8080/api/docs).
 
-![DuckFace](./app/static/img/DuckFace-Diagrama de Clases.png "Diagrama de Clases")
+![DuckFace](/app/static/img/DuckFace-diagrama-de-clases.png)
